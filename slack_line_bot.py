@@ -1,9 +1,6 @@
 import time
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
-from linebot import LineBotApi
-from linebot.exceptions import LineBotApiError
-from linebot.models import TextSendMessage
 import openai
 from config import *
 from linebot.v3.messaging import MessagingApi, Configuration, PushMessageRequest, TextMessage
