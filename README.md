@@ -31,6 +31,13 @@ OPENAI_API_KEY=your_openai_api_key
 python slack_line_bot.py
 ```
 
+## Herokuでのデプロイ方法
+
+1. Heroku CLIをインストール
+2. このリポジトリをHerokuにプッシュ
+3. Herokuの環境変数に`.env`の内容を設定
+4. デプロイ後、自動でBotが起動します
+
 ## 注意事項
 
 - Slackボットには`channels:history`スコープが必要です
