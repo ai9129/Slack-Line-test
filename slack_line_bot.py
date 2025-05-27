@@ -13,10 +13,7 @@ configuration = Configuration(access_token=LINE_CHANNEL_ACCESS_TOKEN)
 messaging_api = MessagingApi(configuration)
 
 # OpenAIクライアントの初期化
-client = OpenAI(
-    api_key=OPENAI_API_KEY,
-    base_url="https://api.openai.com/v1"
-)
+client = OpenAI(api_key=OPENAI_API_KEY)
 
 def get_slack_messages():
     """Slackチャンネルから最新のメッセージを取得"""
