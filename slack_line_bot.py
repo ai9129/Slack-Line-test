@@ -1,19 +1,19 @@
 import time
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
-import openai
+from openai import OpenAI
 from config import *
-from linebot.v3.messaging import MessagingApi, Configuration, PushMessageRequest, TextMessage
+from linebot import LineBotApi
+from linebot.models import TextSendMessage
 
 # Slackクライアントの初期化
 slack_client = WebClient(token=SLACK_BOT_TOKEN)
 
-# LINEクライアントの初期化（v3系対応）
-configuration = Configuration(access_token=LINE_CHANNEL_ACCESS_TOKEN)
-messaging_api = MessagingApi(configuration)
+# LINEクライアントの初期化
+line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 
 # OpenAIクライアントの初期化
-openai.api_key = OPENAI_API_KEY
+client = OpenAI(api_key=OPENAI_API_KEY)
 
 def get_slack_messages():
     """Slackチャンネルから最新のメッセージを取得"""
@@ -30,7 +30,7 @@ def get_slack_messages():
 def summarize_text(text):
     """OpenAIを使用してテキストを要約"""
     try:
-        response = openai.chat.completions.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "以下のテキストを簡潔に要約してください。"},
@@ -44,13 +44,9 @@ def summarize_text(text):
         return text
 
 def send_to_line(message):
-    """LINEにメッセージを送信（v3系対応）"""
+    """LINEにメッセージを送信"""
     try:
-        req = PushMessageRequest(
-            to=LINE_USER_ID,
-            messages=[TextMessage(text=message)]
-        )
-        messaging_api.push_message(req)
+        line_bot_api.push_message(LINE_USER_ID, TextSendMessage(text=message))
     except Exception as e:
         print(f"LINE API エラー: {e}")
 
