@@ -3,14 +3,14 @@ from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 from openai import OpenAI
 from config import *
-from linebot import LineBotApi
-from linebot.models import TextSendMessage
+from linebot.v3.messaging import MessagingApi, Configuration, PushMessageRequest, TextMessage
 
 # Slackクライアントの初期化
 slack_client = WebClient(token=SLACK_BOT_TOKEN)
 
-# LINEクライアントの初期化
-line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
+# LINEクライアントの初期化（v3系対応）
+configuration = Configuration(access_token=LINE_CHANNEL_ACCESS_TOKEN)
+messaging_api = MessagingApi(configuration)
 
 # OpenAIクライアントの初期化
 client = OpenAI(api_key=OPENAI_API_KEY)
@@ -44,9 +44,13 @@ def summarize_text(text):
         return text
 
 def send_to_line(message):
-    """LINEにメッセージを送信"""
+    """LINEにメッセージを送信（v3系対応）"""
     try:
-        line_bot_api.push_message(LINE_USER_ID, TextSendMessage(text=message))
+        req = PushMessageRequest(
+            to=LINE_USER_ID,
+            messages=[TextMessage(text=message)]
+        )
+        messaging_api.push_message(req)
     except Exception as e:
         print(f"LINE API エラー: {e}")
 
